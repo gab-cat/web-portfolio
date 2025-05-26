@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { motion, useInView } from "framer-motion"
-import { useRef } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Building, Award } from "lucide-react"
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { Calendar, MapPin, Building, Award } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const experiences = [
   {
@@ -76,11 +76,11 @@ const experiences = [
       },
     ],
   },
-]
+];
 
 export default function ExperienceSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -91,7 +91,7 @@ export default function ExperienceSection() {
         delayChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, x: -50 },
@@ -103,7 +103,7 @@ export default function ExperienceSection() {
         ease: "easeOut",
       },
     },
-  }
+  };
 
   return (
     <section id="experience" className="py-20 px-4 relative">
@@ -207,5 +207,5 @@ export default function ExperienceSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

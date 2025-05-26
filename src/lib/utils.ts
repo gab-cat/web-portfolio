@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 // Framer Motion animation variants
@@ -19,7 +19,7 @@ export const fadeInVariants = {
       ease: "easeOut"
     }
   }
-}
+};
 
 export const staggerContainer = {
   hidden: {
@@ -32,7 +32,7 @@ export const staggerContainer = {
       staggerChildren: 0.2
     }
   }
-}
+};
 
 // Scale animation for achievement cards
 export const scaleIn = {
@@ -48,7 +48,7 @@ export const scaleIn = {
       ease: "easeOut"
     }
   }
-}
+};
 
 // Slide in animations for contact form sections
 export const slideInFromLeft = {
@@ -64,7 +64,7 @@ export const slideInFromLeft = {
       ease: "easeOut"
     }
   }
-}
+};
 
 export const slideInFromRight = {
   hidden: {
@@ -79,4 +79,4 @@ export const slideInFromRight = {
       ease: "easeOut"
     }
   }
-}
+};

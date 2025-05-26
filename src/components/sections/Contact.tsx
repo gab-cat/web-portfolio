@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { PERSONAL_INFO } from '@/lib/constants'
-import { fadeInVariants, slideInFromLeft, slideInFromRight } from '@/lib/utils'
-import toast from 'react-hot-toast'
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import toast from 'react-hot-toast';
+import { PERSONAL_INFO } from '@/lib/constants';
+import { fadeInVariants, slideInFromLeft, slideInFromRight } from '@/lib/utils';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   message: z.string().min(10, 'Message must be at least 10 characters'),
-})
+});
 
 type ContactForm = z.infer<typeof contactSchema>
 
 export default function Contact() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -26,22 +26,22 @@ export default function Contact() {
     formState: { errors },
   } = useForm<ContactForm>({
     resolver: zodResolver(contactSchema),
-  })
+  });
 
   const onSubmit = async (formData: ContactForm) => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       // Here you would typically send the data to your backend
-      console.log('Form data:', formData) // Log the form data
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulated API call
-      toast.success('Message sent successfully!')
-      reset()
+      console.log('Form data:', formData); // Log the form data
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated API call
+      toast.success('Message sent successfully!');
+      reset();
     } catch (err) {
-      console.error('Error sending message:', err)
-      toast.error('Failed to send message. Please try again.')
+      console.error('Error sending message:', err);
+      toast.error('Failed to send message. Please try again.');
     }
-    setIsSubmitting(false)
-  }
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="relative max-w-4xl mx-auto">
@@ -220,5 +220,5 @@ export default function Contact() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 } 

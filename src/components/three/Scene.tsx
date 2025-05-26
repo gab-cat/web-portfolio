@@ -1,8 +1,9 @@
+/* eslint-disable react/no-unknown-property */
 'use client';
 
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei'
-import Background from './Background'
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import Background from './Background';
 
 interface SceneProps {
   className?: string
@@ -26,5 +27,5 @@ export default function Scene({ className }: SceneProps) {
         <Background />
       </Canvas>
     </div>
-  )
+  );
 } 

@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { motion, useInView } from "framer-motion"
-import { useRef } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Shield, Server, Code, Smartphone, Database, Terminal } from "lucide-react"
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { Shield, Server, Code, Smartphone, Database, Terminal } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const skillCategories = [
   {
@@ -57,11 +57,11 @@ const skillCategories = [
       "Troubleshooting",
     ],
   },
-]
+];
 
 export default function SkillsSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -72,7 +72,7 @@ export default function SkillsSection() {
         delayChildren: 0.2,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 50, scale: 0.9 },
@@ -85,7 +85,7 @@ export default function SkillsSection() {
         ease: "easeOut",
       },
     },
-  }
+  };
 
   return (
     <section id="skills" className="py-20 px-4 relative">
@@ -110,7 +110,7 @@ export default function SkillsSection() {
 
           <motion.div variants={containerVariants} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {skillCategories.map((category, index) => {
-              const IconComponent = category.icon
+              const IconComponent = category.icon;
               return (
                 <motion.div key={category.title} variants={itemVariants}>
                   <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 group h-full">
@@ -147,11 +147,11 @@ export default function SkillsSection() {
                     </CardContent>
                   </Card>
                 </motion.div>
-              )
+              );
             })}
           </motion.div>
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

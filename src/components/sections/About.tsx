@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { motion, useInView } from "framer-motion"
-import { useRef } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { MapPin, Phone, Mail, Calendar, Cloud, Shield, Code } from "lucide-react"
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { MapPin, Phone, Mail, Calendar, Cloud, Shield, Code } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function AboutSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -18,7 +18,7 @@ export default function AboutSection() {
         delayChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -30,7 +30,7 @@ export default function AboutSection() {
         ease: "easeOut",
       },
     },
-  }
+  };
 
   return (
     <section id="about" className="py-20 px-4 relative">
@@ -140,5 +140,5 @@ export default function AboutSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

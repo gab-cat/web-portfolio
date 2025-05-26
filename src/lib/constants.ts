@@ -8,7 +8,7 @@ export const PERSONAL_INFO = {
   linkedin: 'https://linkedin.com/in/gabrielcatimbang',
   cvPath: '/CATIMBANG_Gabriel Angelo_CV.pdf',
   bio: 'Aspiring DevOps Intern with experience as a Webmaster at ThePILLARS Publication, specializing in system administration and DevSecOps. Expert in troubleshooting, infrastructure management, and high-pressure issue resolution with a strong focus on security incident mitigation while maintaining operational stability.',
-}
+};
 
 export const SKILLS = {
   devSecOps: [
@@ -53,7 +53,7 @@ export const SKILLS = {
     'Scrum',
     'Customer Service',
   ],
-}
+};
 
 export const EXPERIENCE = [
   {
@@ -120,7 +120,7 @@ export const EXPERIENCE = [
       'Received multiple awards from Bell Canada for outstanding performance',
     ],
   },
-]
+];
 
 export const PROJECTS = [
   {
@@ -138,7 +138,7 @@ export const PROJECTS = [
     github: 'https://github.com/gab-cat/merchtrack',
     featured: true,
   },
-]
+];
 
 export const ACHIEVEMENTS = [
   {
@@ -164,7 +164,7 @@ export const ACHIEVEMENTS = [
     issuer: 'Bell Canada',
     description: 'Consistently ranked in the top 10% of peers for exceptional customer service and performance while balancing full-time studies.',
   },
-]
+];
 
 export const EDUCATION = [
   {
@@ -183,7 +183,7 @@ export const EDUCATION = [
     status: 'Graduated',
     achievements: ['2nd Honors Award'],
   },
-]
+];
 
 export const CERTIFICATIONS = [
   {
@@ -204,4 +204,4 @@ export const CERTIFICATIONS = [
     year: 'Dec 2024',
     credentialId: 'UC-c236c9e1-3b33-481a-91cc-d9ca6da19eOe',
   },
-] 
+]; 

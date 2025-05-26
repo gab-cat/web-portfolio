@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { motion, useInView } from "framer-motion"
-import { useRef } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ExternalLink, Github, Users, TrendingUp, Clock, Star } from "lucide-react"
-import Image from "next/image"
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { ExternalLink, Github, Users, TrendingUp, Clock, Star } from "lucide-react";
+import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const projects = [
   {
@@ -31,7 +31,7 @@ const projects = [
       "Cross-functional team leadership",
     ],
   },
-]
+];
 
 const additionalProjects = [
   {
@@ -54,11 +54,11 @@ const additionalProjects = [
     technologies: ["React", "Node.js", "Grafana", "Prometheus"],
     status: "Deployed",
   },
-]
+];
 
 export default function ProjectsSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -69,7 +69,7 @@ export default function ProjectsSection() {
         delayChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -81,7 +81,7 @@ export default function ProjectsSection() {
         ease: "easeOut",
       },
     },
-  }
+  };
 
   return (
     <section id="projects" className="py-20 px-4 relative">
@@ -142,7 +142,7 @@ export default function ProjectsSection() {
                       {/* Stats */}
                       <div className="grid grid-cols-3 gap-4">
                         {project.stats.map((stat) => {
-                          const IconComponent = stat.icon
+                          const IconComponent = stat.icon;
                           return (
                             <div
                               key={stat.label}
@@ -152,7 +152,7 @@ export default function ProjectsSection() {
                               <div className="text-white font-semibold">{stat.value}</div>
                               <div className="text-white/60 text-xs">{stat.label}</div>
                             </div>
-                          )
+                          );
                         })}
                       </div>
 
@@ -252,5 +252,5 @@ export default function ProjectsSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
