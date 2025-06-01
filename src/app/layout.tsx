@@ -1,10 +1,22 @@
 import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from 'react-hot-toast';
-import { Inter } from 'next/font/google';
+import { Poppins, Orbitron } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const poppins = Poppins({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-poppins',
+});
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  variable: '--font-orbitron',
+});
 
 export const metadata: Metadata = {
   title: 'Gabriel Angelo B. Catimbang | Portfolio',
@@ -32,7 +44,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${poppins.variable} ${orbitron.variable} ${poppins.className}`} style={{ backgroundColor: '#0a0a0a', color: '#ffffff' }}>
         {children}
         <Toaster position="bottom-right" />
         <Analytics />

@@ -19,6 +19,8 @@ type ContactForm = z.infer<typeof contactSchema>
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  
   const {
     register,
     handleSubmit,
@@ -55,7 +57,7 @@ export default function Contact() {
           className="space-y-6"
         >
           <div>
-            <h3 className="text-2xl font-bold mb-4">Let&apos;s Connect</h3>
+            <h3 className="text-2xl font-heading font-bold mb-4">Let&apos;s Connect</h3>
             <p className="text-gray-400">
               I&apos;m always open to new opportunities and interesting projects.
               Feel free to reach out!
@@ -156,7 +158,7 @@ export default function Contact() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 flex flex-col">
             <div>
               <label htmlFor="name" className="block text-sm font-medium mb-2">
                 Name
@@ -210,15 +212,17 @@ export default function Contact() {
             <motion.button
               type="submit"
               disabled={isSubmitting}
-              className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mx-auto flex text-center py-2 max-w-sm bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-heading font-bold text-base transition-all duration-300 shadow-lg hover:shadow-xl pulse-glow"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
+              <span className="flex-1">
+                {isSubmitting ? 'Sending...' : 'Send Message'}
+              </span>
             </motion.button>
           </form>
         </motion.div>
       </div>
     </div>
   );
-} 
+}

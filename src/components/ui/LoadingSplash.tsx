@@ -6,15 +6,16 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.3,
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
     },
   },
   exit: {
     opacity: 0,
+    scale: 0.8,
     transition: {
-      duration: 0.5,
-      ease: "easeInOut",
+      duration: 0.8,
+      ease: [0.23, 1, 0.32, 1],
     },
   },
 };
@@ -23,10 +24,10 @@ const containerVariants = {
 const floatingDotsVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
-    opacity: [0.2, 0.5, 0.2],
-    y: -20,
+    opacity: [0.2, 0.8, 0.2],
+    y: -30,
     transition: {
-      duration: 2,
+      duration: 3,
       repeat: Infinity,
       ease: "easeInOut",
     },
@@ -39,7 +40,7 @@ const logoPathVariants = {
     pathLength: 1,
     opacity: 1,
     transition: {
-      duration: 2,
+      duration: 2.5,
       ease: "easeInOut",
     },
   },
@@ -62,13 +63,13 @@ export default function LoadingSplash() {
   const [loadingText, setLoadingText] = useState("INITIALIZING");
   
   useEffect(() => {
-    const texts = ["INITIALIZING", "LOADING ASSETS", "PREPARING DATA", "ALMOST READY"];
+    const texts = ["INITIALIZING", "LOADING ASSETS", "PREPARING VISUALS", "FINALIZING", "ALMOST READY"];
     let currentIndex = 0;
     
     const textInterval = setInterval(() => {
       currentIndex = (currentIndex + 1) % texts.length;
       setLoadingText(texts[currentIndex]);
-    }, 800);
+    }, 500);
 
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
@@ -78,7 +79,7 @@ export default function LoadingSplash() {
         }
         return prev + 1;
       });
-    }, 30);
+    }, 25); // Slightly faster to complete in 2.5 seconds
 
     return () => {
       clearInterval(textInterval);

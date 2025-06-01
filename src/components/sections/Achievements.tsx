@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { Trophy, Medal, Star, Calendar, GamepadIcon, ContainerIcon, Github, Database, Code2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAdvancedScrollAnimations, useMagneticEffect, useTextReveal } from "@/hooks/useAdvancedAnimations";
 
 const achievements = [
   {
@@ -88,6 +89,11 @@ const certifications = [
 export default function AchievementsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  
+  // Advanced animations
+  const scrollAnimations = useAdvancedScrollAnimations();
+  const textReveal = useTextReveal();
+  const magneticRef = useMagneticEffect(0.15);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -101,13 +107,39 @@ export default function AchievementsSection() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.9 },
+    hidden: { opacity: 0, y: 50, scale: 0.9, rotateX: -10 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
+      rotateX: 0,
       transition: {
         duration: 0.8,
+        ease: [0.23, 1, 0.32, 1],
+      },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.8, rotateY: -15 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      rotateY: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.23, 1, 0.32, 1],
+      },
+    },
+  };
+
+  const achievementHoverVariants = {
+    hover: {
+      scale: 1.05,
+      rotateY: 10,
+      rotateX: 5,
+      transition: {
+        duration: 0.3,
         ease: "easeOut",
       },
     },
@@ -124,16 +156,25 @@ export default function AchievementsSection() {
           className="space-y-12"
         >
           <motion.div variants={itemVariants} className="text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <motion.h2 
+              {...textReveal}
+              className="text-4xl md:text-5xl font-heading font-bold text-white mb-4"
+            >
               Honors &{" "}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Achievements
               </span>
-            </h2>
-            <p className="text-white/70 text-lg max-w-2xl mx-auto">
+            </motion.h2>
+            <motion.p 
+              {...textReveal}
+              className="text-white/70 text-lg max-w-2xl mx-auto"
+            >
               Recognition for excellence in cybersecurity, customer service, and technical innovation
-            </p>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full mt-4" />
+            </motion.p>
+            <motion.div 
+              className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full mt-4"
+              style={{ scaleX: scrollAnimations.scale }}
+            />
           </motion.div>
 
           {/* Major Achievements */}
@@ -141,54 +182,66 @@ export default function AchievementsSection() {
             {achievements.map((achievement, index) => {
               const IconComponent = achievement.icon;
               return (
-                <motion.div key={achievement.title} variants={itemVariants}>
-                  <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 overflow-hidden">
-                    <CardContent className="p-0">
-                      <div className="grid lg:grid-cols-3 gap-0">
-                        {/* Icon Section */}
-                        <div className={`p-8 bg-gradient-to-br ${achievement.color} flex items-center justify-center`}>
-                          <motion.div
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
-                            transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
-                            className="text-white"
-                          >
-                            <IconComponent className="h-16 w-16" />
-                          </motion.div>
+                <motion.div 
+                  key={achievement.title} 
+                  variants={cardVariants}
+                  whileHover="hover"
+                  style={{ x: magneticRef.x, y: magneticRef.y }}
+                >
+                  <motion.div variants={achievementHoverVariants}>
+                    <Card className="bg-white/5 border-white/10 backdrop-blur-sm holographic-card overflow-hidden group">
+                      <CardContent className="p-0 relative">
+                        {/* Floating particles effect */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10">
+                          <div className="quantum-dots"></div>
                         </div>
-
-                        {/* Content Section */}
-                        <div className="lg:col-span-2 p-8 space-y-4">
-                          <div>
-                            <h3 className="text-2xl font-bold text-white mb-1">{achievement.title}</h3>
-                            <p className="text-blue-400 font-medium">{achievement.subtitle}</p>
+                        
+                        <div className="grid lg:grid-cols-3 gap-0 relative z-20">
+                          {/* Icon Section */}
+                          <div className={`p-8 bg-gradient-to-br ${achievement.color} flex items-center justify-center`}>
+                            <motion.div
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
+                              transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
+                              className="text-white"
+                            >
+                              <IconComponent className="h-16 w-16" />
+                            </motion.div>
                           </div>
 
-                          <div className="flex items-center gap-4 text-white/70">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              <span className="text-sm">{achievement.date}</span>
+                          {/* Content Section */}
+                          <div className="lg:col-span-2 p-8 space-y-4">
+                            <div>
+                              <h3 className="text-2xl font-heading font-bold text-white mb-1">{achievement.title}</h3>
+                              <p className="text-blue-400 font-medium">{achievement.subtitle}</p>
                             </div>
-                            <span>•</span>
-                            <span className="text-sm">{achievement.issuer}</span>
-                          </div>
 
-                          <p className="text-white/80 leading-relaxed">{achievement.description}</p>
-
-                          {/* Stats */}
-                          <div className="flex flex-wrap gap-4">
-                            {Object.entries(achievement.stats).map(([key, value]) => (
-                              <div key={key} className="flex items-center gap-2">
-                                <Badge variant="secondary" className="bg-white/10 text-white/90">
-                                  {key}: {value}
-                                </Badge>
+                            <div className="flex items-center gap-4 text-white/70">
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                <span className="text-sm">{achievement.date}</span>
                               </div>
-                            ))}
+                              <span>•</span>
+                              <span className="text-sm">{achievement.issuer}</span>
+                            </div>
+
+                            <p className="text-white/80 leading-relaxed">{achievement.description}</p>
+
+                            {/* Stats */}
+                            <div className="flex flex-wrap gap-4">
+                              {Object.entries(achievement.stats).map(([key, value]) => (
+                                <div key={key} className="flex items-center gap-2">
+                                  <Badge variant="secondary" className="bg-white/10 text-white/90">
+                                    {key}: {value}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 </motion.div>
               );
             })}
@@ -196,7 +249,7 @@ export default function AchievementsSection() {
 
           {/* Certifications */}
           <motion.div variants={itemVariants} className="mt-16">
-            <h3 className="text-3xl font-bold text-white mb-8 text-center">
+            <h3 className="text-3xl font-heading font-bold text-white mb-8 text-center">
               Professional{" "}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Certifications

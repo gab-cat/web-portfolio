@@ -1,5 +1,5 @@
-import type { Config } from 'tailwindcss'
-import typography from '@tailwindcss/typography'
+import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography';
 
 const config: Config = {
   darkMode: ['class', 'class'],
@@ -15,6 +15,10 @@ const config: Config = {
   		}
   	},
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
+  			heading: ['var(--font-orbitron)', 'system-ui', 'sans-serif'],
+  		},
   		colors: {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
@@ -106,6 +110,6 @@ const config: Config = {
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [typography, require("tailwindcss-animate")],
-}
+};
 
-export default config 
+export default config; 
