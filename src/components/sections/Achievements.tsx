@@ -1,12 +1,13 @@
 "use client";
 
+import React, { memo, useMemo, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 import { Trophy, Medal, Star, Calendar, GamepadIcon, ContainerIcon, Github, Database, Code2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useAdvancedScrollAnimations, useMagneticEffect, useTextReveal } from "@/hooks/useAdvancedAnimations";
+import { useStaggeredReveal } from "@/hooks/useAdvancedAnimations";
 
+// Memoized achievement data to prevent recreating objects
 const achievements = [
   {
     title: "5th Highest Overall Scorer",
@@ -41,8 +42,9 @@ const achievements = [
     color: "from-green-500 to-teal-500",
     stats: { awards: "4x", ranking: "Top 10%", duration: "3 years" },
   },
-];
+] as const;
 
+// Memoized certification data
 const certifications = [
   {
     title: "Unreal Engine 5: Soulslike Melee Combat System",
@@ -84,66 +86,184 @@ const certifications = [
     icon: Code2,
     skills: ["Nuxt 3", "Vue.js", "JavaScript", "TypeScript"]
   },
-];
+] as const;
 
-export default function AchievementsSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+// Memoized Achievement Card Component
+const AchievementCard = memo(({ achievement, index, isInView }: {
+  achievement: (typeof achievements)[number];
+  index: number;
+  isInView: boolean;
+}) => {
+  const IconComponent = achievement.icon;
   
-  // Advanced animations
-  const scrollAnimations = useAdvancedScrollAnimations();
-  const textReveal = useTextReveal();
-  const magneticRef = useMagneticEffect(0.15);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50, scale: 0.9, rotateX: -10 },
-    visible: {
-      opacity: 1,
+  // Memoized variants to prevent recreation
+  const itemVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
       y: 0,
-      scale: 1,
-      rotateX: 0,
       transition: {
-        duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
-      },
-    },
-  };
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    }
+  }), []);
 
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8, rotateY: -15 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      rotateY: 0,
-      transition: {
-        duration: 0.7,
-        ease: [0.23, 1, 0.32, 1],
-      },
-    },
-  };
+  const iconVariants = useMemo(() => ({
+    hidden: { scale: 0, rotate: -180 },
+    visible: { 
+      scale: 1, 
+      rotate: 0,
+      transition: { 
+        delay: index * 0.1, 
+        duration: 0.6, 
+        ease: "easeOut" 
+      }
+    }
+  }), [index]);
 
-  const achievementHoverVariants = {
-    hover: {
-      scale: 1.05,
-      rotateY: 10,
-      rotateX: 5,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    },
-  };
+  const statsEntries = useMemo(() => Object.entries(achievement.stats), [achievement.stats]);
+
+  return (
+    <motion.div 
+      variants={itemVariants}
+      whileHover={{ scale: 1.01 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Card className="bg-white/5 border-white/10 backdrop-blur-sm holographic-card overflow-hidden group">
+        <CardContent className="p-0 relative">
+          <div className="grid lg:grid-cols-3 gap-0 relative z-20">
+            {/* Icon Section */}
+            <div className={`p-8 bg-gradient-to-br ${achievement.color} flex items-center justify-center`}>
+              <motion.div
+                variants={iconVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+                className="text-white"
+              >
+                <IconComponent className="h-16 w-16" />
+              </motion.div>
+            </div>
+
+            {/* Content Section */}
+            <div className="lg:col-span-2 p-8 space-y-4">
+              <div>
+                <h3 className="text-2xl font-heading font-bold text-white mb-1">{achievement.title}</h3>
+                <p className="text-blue-400 font-medium">{achievement.subtitle}</p>
+              </div>
+
+              <div className="flex items-center gap-4 text-white/70">
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-sm">{achievement.date}</span>
+                </div>
+                <span>•</span>
+                <span className="text-sm">{achievement.issuer}</span>
+              </div>
+
+              <p className="text-white/80 leading-relaxed">{achievement.description}</p>
+
+              {/* Stats */}
+              <div className="flex flex-wrap gap-4">
+                {statsEntries.map(([key, value]) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <Badge variant="secondary" className="bg-white/10 text-white/90">
+                      {key}: {value}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+});
+
+AchievementCard.displayName = 'AchievementCard';
+
+// Memoized Certification Card Component
+const CertificationCard = memo(({ cert, index }: {
+  cert: (typeof certifications)[number];
+  index: number;
+}) => {
+  const IconComponent = cert.icon;
+  
+  const itemVariants = useMemo(() => ({
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        delay: index * 0.05,
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    }
+  }), [index]);
+
+  return (
+    <motion.div variants={itemVariants}>
+      <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 h-full">
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+              <IconComponent className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-white text-sm">{cert.title}</h4>
+              <p className="text-white/70 text-xs">{cert.issuer}</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-1 text-white/60">
+              <Calendar className="h-3 w-3" />
+              <span className="text-xs">{cert.date}</span>
+            </div>
+            <div className="text-xs text-white/50">ID: {cert.credentialId}</div>
+            {cert.skills && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {cert.skills.map((skill) => (
+                  <Badge
+                    key={skill}
+                    variant="secondary"
+                    className="bg-white/10 text-white/70 text-xs"
+                  >
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+});
+
+CertificationCard.displayName = 'CertificationCard';
+
+// Main Component with comprehensive memoization
+const AchievementsSection = memo(() => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { 
+    once: true, 
+    margin: "-100px",
+    amount: 0.1
+  });
+  
+  // Optimized animations with throttled updates
+  const { containerVariants, itemVariants } = useStaggeredReveal(0.08);
+
+  // Memoized achievement highlights data
+  const highlightStats = useMemo(() => [
+    { value: "5th", label: "National CTF Ranking", color: "text-blue-400" },
+    { value: "1st", label: "Regional Champion", color: "text-purple-400" },
+    { value: "4x", label: "Bell All Star", color: "text-green-400" },
+    { value: "5", label: "Recent Certifications", color: "text-yellow-400" },
+  ], []);
 
   return (
     <section id="achievements" className="py-20 px-4 relative">
@@ -155,9 +275,10 @@ export default function AchievementsSection() {
           animate={isInView ? "visible" : "hidden"}
           className="space-y-12"
         >
+          {/* Header Section */}
           <motion.div variants={itemVariants} className="text-center">
             <motion.h2 
-              {...textReveal}
+              variants={itemVariants}
               className="text-4xl md:text-5xl font-heading font-bold text-white mb-4"
             >
               Honors &{" "}
@@ -166,85 +287,27 @@ export default function AchievementsSection() {
               </span>
             </motion.h2>
             <motion.p 
-              {...textReveal}
+              variants={itemVariants}
               className="text-white/70 text-lg max-w-2xl mx-auto"
             >
               Recognition for excellence in cybersecurity, customer service, and technical innovation
             </motion.p>
             <motion.div 
               className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full mt-4"
-              style={{ scaleX: scrollAnimations.scale }}
+              variants={itemVariants}
             />
           </motion.div>
 
           {/* Major Achievements */}
           <div className="space-y-8">
-            {achievements.map((achievement, index) => {
-              const IconComponent = achievement.icon;
-              return (
-                <motion.div 
-                  key={achievement.title} 
-                  variants={cardVariants}
-                  whileHover="hover"
-                  style={{ x: magneticRef.x, y: magneticRef.y }}
-                >
-                  <motion.div variants={achievementHoverVariants}>
-                    <Card className="bg-white/5 border-white/10 backdrop-blur-sm holographic-card overflow-hidden group">
-                      <CardContent className="p-0 relative">
-                        {/* Floating particles effect */}
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10">
-                          <div className="quantum-dots"></div>
-                        </div>
-                        
-                        <div className="grid lg:grid-cols-3 gap-0 relative z-20">
-                          {/* Icon Section */}
-                          <div className={`p-8 bg-gradient-to-br ${achievement.color} flex items-center justify-center`}>
-                            <motion.div
-                              initial={{ scale: 0, rotate: -180 }}
-                              animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
-                              transition={{ delay: index * 0.2, duration: 0.8, ease: "easeOut" }}
-                              className="text-white"
-                            >
-                              <IconComponent className="h-16 w-16" />
-                            </motion.div>
-                          </div>
-
-                          {/* Content Section */}
-                          <div className="lg:col-span-2 p-8 space-y-4">
-                            <div>
-                              <h3 className="text-2xl font-heading font-bold text-white mb-1">{achievement.title}</h3>
-                              <p className="text-blue-400 font-medium">{achievement.subtitle}</p>
-                            </div>
-
-                            <div className="flex items-center gap-4 text-white/70">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
-                                <span className="text-sm">{achievement.date}</span>
-                              </div>
-                              <span>•</span>
-                              <span className="text-sm">{achievement.issuer}</span>
-                            </div>
-
-                            <p className="text-white/80 leading-relaxed">{achievement.description}</p>
-
-                            {/* Stats */}
-                            <div className="flex flex-wrap gap-4">
-                              {Object.entries(achievement.stats).map(([key, value]) => (
-                                <div key={key} className="flex items-center gap-2">
-                                  <Badge variant="secondary" className="bg-white/10 text-white/90">
-                                    {key}: {value}
-                                  </Badge>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </motion.div>
-              );
-            })}
+            {achievements.map((achievement, index) => (
+              <AchievementCard 
+                key={achievement.title}
+                achievement={achievement}
+                index={index}
+                isInView={isInView}
+              />
+            ))}
           </div>
 
           {/* Certifications */}
@@ -257,72 +320,28 @@ export default function AchievementsSection() {
             </h3>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {certifications.map((cert, index) => {
-                const IconComponent = cert.icon;
-                return (
-                  <motion.div key={cert.title} variants={itemVariants} transition={{ delay: index * 0.1 }}>
-                    <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 h-full">
-                      <CardContent className="p-6 space-y-4">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
-                            <IconComponent className="h-5 w-5 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-white text-sm">{cert.title}</h4>
-                            <p className="text-white/70 text-xs">{cert.issuer}</p>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-1 text-white/60">
-                            <Calendar className="h-3 w-3" />
-                            <span className="text-xs">{cert.date}</span>
-                          </div>
-                          <div className="text-xs text-white/50">ID: {cert.credentialId}</div>
-                          {cert.skills && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {cert.skills.map((skill) => (
-                                <Badge
-                                  key={skill}
-                                  variant="secondary"
-                                  className="bg-white/10 text-white/70 text-xs"
-                                >
-                                  {skill}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
+              {certifications.map((cert, index) => (
+                <CertificationCard 
+                  key={cert.title}
+                  cert={cert}
+                  index={index}
+                />
+              ))}
             </div>
           </motion.div>
 
-          {/* Achievement Summary */}
+          {/* Achievement Summary - Memoized */}
           <motion.div variants={itemVariants}>
             <Card className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20 backdrop-blur-sm">
               <CardContent className="p-8 text-center">
                 <h3 className="text-2xl font-bold text-white mb-4">Achievement Highlights</h3>
                 <div className="grid md:grid-cols-4 gap-6">
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold text-blue-400">5th</div>
-                    <div className="text-white/80 text-sm">National CTF Ranking</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold text-purple-400">1st</div>
-                    <div className="text-white/80 text-sm">Regional Champion</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold text-green-400">4x</div>
-                    <div className="text-white/80 text-sm">Bell All Star</div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="text-3xl font-bold text-yellow-400">5</div>
-                    <div className="text-white/80 text-sm">Recent Certifications</div>
-                  </div>
+                  {highlightStats.map((stat) => (
+                    <div key={stat.label} className="space-y-2">
+                      <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
+                      <div className="text-white/80 text-sm">{stat.label}</div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -331,4 +350,8 @@ export default function AchievementsSection() {
       </div>
     </section>
   );
-}
+});
+
+AchievementsSection.displayName = 'AchievementsSection';
+
+export default AchievementsSection;

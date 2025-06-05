@@ -2,9 +2,10 @@
 
 import { motion, useInView } from 'framer-motion';
 import { Github, Linkedin, Mail, Twitter } from 'lucide-react';
-import { useRef } from 'react';
-import { useMagneticEffect, useTextReveal } from "@/hooks/useAdvancedAnimations";
+import { useRef, useMemo, memo } from 'react';
+import { useSimpleMagneticEffect } from "@/hooks/useAdvancedAnimations";
 
+// Memoized social links data
 const socialLinks = [
   {
     icon: Github,
@@ -30,50 +31,105 @@ const socialLinks = [
     label: "Email",
     color: "hover:text-pink-400",
   },
-];
+] as const;
 
-export default function Footer() {
+// Memoized quick links data
+const quickLinks = ["About", "Experience", "Skills", "Projects", "Contact"] as const;
+
+// Memoized Social Link Component
+const SocialLink = memo<{
+  icon: typeof Github;
+  href: string;
+  label: string;
+  color: string;
+  index: number;
+  isInView: boolean;
+  magneticRef: { x: import('framer-motion').MotionValue<number>; y: import('framer-motion').MotionValue<number> };
+    }>(({ icon: Icon, href, label, color, index, isInView, magneticRef }) => (
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`text-white/60 ${color} transition-colors duration-200`}
+        variants={socialHoverVariants}
+        whileHover="hover"
+        whileTap={{ scale: 0.9 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ delay: index * 0.1, duration: 0.3 }}
+        style={{ x: magneticRef.x, y: magneticRef.y }}
+      >
+        <Icon className="h-6 w-6" />
+        <span className="sr-only">{label}</span>
+      </motion.a>
+    ));
+SocialLink.displayName = 'SocialLink';
+
+// Memoized Quick Link Component
+const QuickLink = memo<{
+  link: typeof quickLinks[number];
+  index: number;
+  isInView: boolean;
+}>(({ link, index, isInView }) => (
+  <motion.li 
+    initial={{ opacity: 0, x: -20 }}
+    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+    transition={{ delay: index * 0.1, duration: 0.3 }}
+  >
+    <a
+      href={`#${link.toLowerCase()}`}
+      className="text-white/60 hover:text-blue-400 transition-colors duration-200"
+    >
+      {link}
+    </a>
+  </motion.li>
+));
+QuickLink.displayName = 'QuickLink';
+
+// Memoized animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    },
+  },
+} as const;
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.23, 1, 0.32, 1],
+    },
+  },
+} as const;
+
+const socialHoverVariants = {
+  hover: {
+    scale: 1.2,
+    rotate: 5,
+    transition: {
+      duration: 0.2,
+      ease: "easeOut",
+    },
+  },
+} as const;
+
+const Footer = memo(() => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
-  // Advanced animations
+  // Simplified animations
+  const magneticRef = useSimpleMagneticEffect(0.1);
 
-  const textReveal = useTextReveal();
-  const magneticRef = useMagneticEffect(0.1);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.23, 1, 0.32, 1],
-      },
-    },
-  };
-
-  const socialHoverVariants = {
-    hover: {
-      scale: 1.2,
-      rotate: 5,
-      transition: {
-        duration: 0.2,
-        ease: "easeOut",
-      },
-    },
-  };
+  // Memoized current year to prevent recalculation
+  const currentYear = useMemo(() => new Date().getFullYear(), []);
   return (
     <footer className="relative mt-20" ref={ref}>
       
@@ -89,13 +145,13 @@ export default function Footer() {
             {/* Brand Section */}
             <motion.div variants={itemVariants} className="space-y-4">
               <motion.h3 
-                {...textReveal}
+                variants={itemVariants}
                 className="text-2xl font-heading font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
               >
                 Gabriel Catimbang
               </motion.h3>
               <motion.p 
-                {...textReveal}
+                variants={itemVariants}
                 className="text-white/60 max-w-xs"
               >
                 DevSecOps Engineer & Full-Stack Developer passionate about building secure and scalable solutions.
@@ -106,20 +162,13 @@ export default function Footer() {
             <motion.div variants={itemVariants} className="space-y-4">
               <h4 className="text-lg font-semibold text-white">Quick Links</h4>
               <ul className="space-y-2">
-                {["About", "Experience", "Skills", "Projects", "Contact"].map((link, index) => (
-                  <motion.li 
+                {quickLinks.map((link, index) => (
+                  <QuickLink 
                     key={link}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                    transition={{ delay: index * 0.1, duration: 0.3 }}
-                  >
-                    <a
-                      href={`#${link.toLowerCase()}`}
-                      className="text-white/60 hover:text-blue-400 transition-colors duration-200"
-                    >
-                      {link}
-                    </a>
-                  </motion.li>
+                    link={link}
+                    index={index}
+                    isInView={isInView}
+                  />
                 ))}
               </ul>
             </motion.div>
@@ -128,24 +177,17 @@ export default function Footer() {
             <motion.div variants={itemVariants} className="space-y-4">
               <h4 className="text-lg font-semibold text-white">Connect</h4>
               <div className="flex gap-4">
-                {socialLinks.map(({ icon: Icon, href, label, color }, index) => (
-                  <motion.a
+                {socialLinks.map(({ icon, href, label, color }, index) => (
+                  <SocialLink
                     key={label}
+                    icon={icon}
                     href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`text-white/60 ${color} transition-colors duration-200`}
-                    variants={socialHoverVariants}
-                    whileHover="hover"
-                    whileTap={{ scale: 0.9 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ delay: index * 0.1, duration: 0.3 }}
-                    style={{ x: magneticRef.x, y: magneticRef.y }}
-                  >
-                    <Icon className="h-6 w-6" />
-                    <span className="sr-only">{label}</span>
-                  </motion.a>
+                    label={label}
+                    color={color}
+                    index={index}
+                    isInView={isInView}
+                    magneticRef={magneticRef}
+                  />
                 ))}
               </div>
             </motion.div>
@@ -157,14 +199,17 @@ export default function Footer() {
             className="mt-12 pt-8 border-t border-white/10"
           >
             <motion.p 
-              {...textReveal}
+              variants={itemVariants}
               className="text-white/60 text-sm text-center"
             >
-              © {new Date().getFullYear()} Gabriel Catimbang. All rights reserved.
+              © {currentYear} Gabriel Catimbang. All rights reserved.
             </motion.p>
           </motion.div>
         </div>
       </motion.div>
     </footer>
   );
-} 
+});
+Footer.displayName = 'Footer';
+
+export default Footer;

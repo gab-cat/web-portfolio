@@ -1,7 +1,6 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import Experience from '@/components/sections/Experience';
 import Projects from '@/components/sections/Projects';
@@ -12,11 +11,10 @@ import TableOfContents from '@/components/ui/TableOfContents';
 import Footer from '@/components/ui/Footer';
 import { staggerContainer } from '@/lib/utils';
 import AboutSection from '@/components/sections/About';
+import Skills from '@/components/sections/Skills';
+import UnifiedBackground from '@/components/three/UnifiedBackground';
+import EnhancedHeroCard from '@/components/three/EnhancedHeroCard';
 
-// Dynamically import Three.js components with no SSR
-const UnifiedBackground = dynamic(() => import('@/components/three/UnifiedBackground'), { ssr: false });
-const EnhancedHeroCard = dynamic(() => import('@/components/three/EnhancedHeroCard'), { ssr: false });
-const Skills = dynamic(() => import('@/components/sections/Skills'), { ssr: false });
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);

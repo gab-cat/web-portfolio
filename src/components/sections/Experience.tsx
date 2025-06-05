@@ -1,12 +1,13 @@
 "use client";
 
+import React, { memo, useMemo, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Calendar, MapPin, Building, Award } from "lucide-react";
+import { Calendar, Building, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useAdvancedScrollAnimations, useMagneticEffect, useTextReveal } from "@/hooks/useAdvancedAnimations";
+import { useStaggeredReveal } from "@/hooks/useAdvancedAnimations";
 
+// Memoized experience data
 const experiences = [
   {
     company: "ThePILLARS PUBLICATION",
@@ -17,7 +18,7 @@ const experiences = [
         type: "Full-time · Hybrid",
         duration: "Jul 2024 – Present · 11 mos",
         description:
-          "Oversee project development and delivery, ensure efficient workflows using Kanban boards and manage cloud-based deployments, optimize performance, and secure systems. Implement DevSecOps processes, including CI/CD pipelines, and automate testing, builds, and deployments.",
+					"Oversee project development and delivery, ensure efficient workflows using Kanban boards and manage cloud-based deployments, optimize performance, and secure systems. Implement DevSecOps processes, including CI/CD pipelines, and automate testing, builds, and deployments.",
         skills: [
           "Docker",
           "Linux System Administration",
@@ -35,7 +36,7 @@ const experiences = [
         type: "Full-time · Hybrid",
         duration: "Mar 2024 – Jul 2024 · 5 mos",
         description:
-          "Designed and developed intuitive user interfaces for web applications, ensuring responsive design and cross-browser compatibility. Collaborated with the team to implement user feedback and optimize performance for better user experience.",
+					"Designed and developed intuitive user interfaces for web applications, ensuring responsive design and cross-browser compatibility. Collaborated with the team to implement user feedback and optimize performance for better user experience.",
         skills: [
           "Vue.js",
           "TypeScript",
@@ -52,7 +53,7 @@ const experiences = [
         type: "Internship · Hybrid",
         duration: "Jan 2024 – Jun 2024 · 6 mos",
         description:
-          "Assisted in the development of web applications, focusing on frontend technologies. Gained hands-on experience in building responsive and user-friendly interfaces, collaborating with senior developers to implement best practices.",
+					"Developed and maintained content creation workflows, collaborated with writers and editors to ensure quality output, and integrated content management systems for efficient publishing.",
         skills: [
           "HTML",
           "CSS",
@@ -99,8 +100,15 @@ const experiences = [
         type: "Care eChat, Quantrics Enterprises Inc.",
         duration: "May 2022 – Apr 2025 · 3 yrs",
         description:
-          "Effectively resolved all of the customer's concerns with ease, accuracy, and maintaining engaging dynamics between the customers as proven by the awards given by Bell. Excellence in multitasking as proven by engaging with two customers at the same time while providing the best solutions without diminished quality.",
-        skills: ["Customer Service", "Communication soft skills", "Customer relationship management"],
+					"Delivered exceptional customer service, resolved complex technical issues, and maintained high satisfaction ratings. Consistently recognized for performance excellence and customer advocacy.",
+        skills: [
+          "Customer Service",
+          "Technical Support",
+          "Problem Solving",
+          "Communication",
+          "Customer Advocacy",
+          "Performance Excellence",
+        ],
         achievement: "4x Bell All Star Winner (Periods 13, 14, 15, 16)",
       },
     ],
@@ -133,50 +141,87 @@ const experiences = [
   },
 ];
 
-export default function ExperienceSection() {
+// CompanySection component definition
+type CompanySectionProps = {
+  experience: typeof experiences[number];
+  index: number;
+};
+
+function CompanySection({ experience }: CompanySectionProps) {
+  return (
+    <div>
+      <div className="flex items-center gap-4 mb-4">
+        <Building className="text-blue-400" />
+        <h3 className="text-2xl font-bold text-white">{experience.company}</h3>
+        <span className="text-white/60 text-sm">{experience.location}</span>
+      </div>
+      <div className="space-y-8">
+        {experience.positions.map((position, idx) => (
+          <Card key={idx} className="bg-white/5 border-white/10">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Award className="w-4 h-4 text-purple-400" />
+                    <span className="font-semibold text-white">{position.title}</span>
+                    <span className="text-xs text-white/60">{position.type}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/60 mb-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>{position.duration}</span>
+                  </div>
+                  <p className="text-white/80 mb-2">{position.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {position.skills.map((skill, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                  {position.achievement && (
+                    <div className="mt-2 text-yellow-500 text-sm font-semibold">
+                      {position.achievement}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ExperienceSection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  
-  // Advanced animations
-  const scrollAnimations = useAdvancedScrollAnimations();
-  const textReveal = useTextReveal();
-  const magneticRef = useMagneticEffect(0.3);
+  const isInView = useInView(ref, {
+    once: true,
+    margin: "-100px",
+    amount: 0.1,
+  });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1,
-      },
-    },
-  };
+  // Optimized animations with throttled updates
+  const { containerVariants, itemVariants } = useStaggeredReveal(0.1);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 60, rotateX: -15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      rotateX: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.6, -0.05, 0.01, 0.99],
-      },
-    },
-  };
+  // Memoized stats calculation
+  const experienceStats = useMemo(() => {
+    const totalPositions = experiences.reduce((acc, exp) => {
+      return acc + exp.positions.length;
+    }, 0);
 
-  const cardHoverVariants = {
-    hover: {
-      y: -10,
-      scale: 1.02,
-      rotateY: 5,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut",
-      },
-    },
-  };
+    const allSkills = experiences.flatMap((exp) =>
+      exp.positions.flatMap((pos) => pos.skills)
+    );
+    const uniqueSkills = new Set(allSkills).size;
+
+    return {
+      totalYears: "3+",
+      totalPositions,
+      uniqueSkills,
+      companies: experiences.length,
+    };
+  }, []);
 
   return (
     <section id="experience" className="py-20 px-4 relative">
@@ -188,158 +233,86 @@ export default function ExperienceSection() {
           animate={isInView ? "visible" : "hidden"}
           className="space-y-12"
         >
+          {/* Header Section */}
           <motion.div variants={itemVariants} className="text-center">
-            <motion.h2 
-              {...textReveal}
+            <motion.h2
+              variants={itemVariants}
               className="text-4xl md:text-5xl font-heading font-bold text-white mb-4"
             >
-              Work{" "}
+              Professional{" "}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Experience
               </span>
             </motion.h2>
-            <motion.p 
-              {...textReveal}
+            <motion.p
+              variants={itemVariants}
               className="text-white/70 text-lg max-w-2xl mx-auto"
             >
-              A journey through diverse roles in technology, customer service, and
-              leadership
+              A journey through roles that shaped my expertise in development, DevOps,
+              and customer experience
             </motion.p>
-            <motion.div 
+            <motion.div
               className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full mt-4"
-              style={{ scaleX: scrollAnimations.scale }}
+              variants={itemVariants}
             />
           </motion.div>
 
-          <div className="relative">
-            {/* Timeline Line */}
-            <motion.div 
-              className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-purple-400"
-              style={{ scaleY: scrollAnimations.scale }}
-            />
-
-            <div className="space-y-12">
-              {experiences.map((company, companyIndex) => (
-                <motion.div key={company.company} variants={itemVariants}>
-                  <div className="space-y-8">
-                    {company.positions.map((position, positionIndex) => (
-                      <motion.div
-                        key={positionIndex}
-                        className={`relative flex items-center ${
-                          (companyIndex + positionIndex) % 2 === 0
-                            ? "md:flex-row"
-                            : "md:flex-row-reverse"
-                        }`}
-                        whileHover="hover"
-                        variants={cardHoverVariants}
-                      >
-                        {/* Timeline Dot */}
-                        <motion.div 
-                          className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full border-4 border-slate-900 z-10"
-                          whileHover={{ scale: 1.5 }}
-                          transition={{ duration: 0.2 }}
-                        />
-
-                        {/* Content Card */}
-                        <motion.div
-                          className={`w-full md:w-1/2 ml-12 md:ml-0 ${
-                            (companyIndex + positionIndex) % 2 === 0
-                              ? "md:pr-8"
-                              : "md:pl-8"
-                          }`}
-                          style={{ x: magneticRef.x, y: magneticRef.y }}
-                        >
-                          <Card 
-                            className="holographic-card bg-white/5 border-white/10 backdrop-blur-sm overflow-hidden group"
-                          >
-                            <CardContent className="p-6 space-y-4 relative">
-                              {/* Floating particles effect */}
-                              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                <div className="quantum-dots"></div>
-                              </div>
-                              
-                              <div className="space-y-2 relative z-10">
-                                <div className="flex items-center gap-2 text-blue-400">
-                                  <Building className="h-4 w-4" />
-                                  <span className="font-semibold">
-                                    {company.company}
-                                  </span>
-                                </div>
-                                <motion.h3 
-                                  {...textReveal}
-                                  className="text-xl font-heading font-bold text-white"
-                                >
-                                  {position.title}
-                                </motion.h3>
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-white/70">
-                                  <div className="flex items-center gap-1">
-                                    <Calendar className="h-4 w-4" />
-                                    <span className="text-sm">
-                                      {position.duration}
-                                    </span>
-                                  </div>
-                                  <span className="hidden sm:block">•</span>
-                                  <span className="text-sm">
-                                    {position.type}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1 text-white/60">
-                                  <MapPin className="h-4 w-4" />
-                                  <span className="text-sm">
-                                    {company.location}
-                                  </span>
-                                </div>
-                              </div>
-
-                              {position.achievement && (
-                                <motion.div 
-                                  className="flex items-center gap-2 p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30"
-                                  initial={{ opacity: 0, scale: 0.8 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  transition={{ delay: 0.3 }}
-                                >
-                                  <Award className="h-4 w-4 text-yellow-400" />
-                                  <span className="text-yellow-200 text-sm font-medium">
-                                    {position.achievement}
-                                  </span>
-                                </motion.div>
-                              )}
-
-                              <p className="text-white/80 leading-relaxed relative z-10">
-                                {position.description}
-                              </p>
-
-                              <div className="flex flex-wrap gap-2 relative z-10">
-                                {position.skills.map((skill, skillIndex) => (
-                                  <motion.div
-                                    key={skill}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: skillIndex * 0.05 }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                  >
-                                    <Badge
-                                      variant="secondary"
-                                      className="liquid-button bg-white/10 text-white/90 hover:bg-white/20 transition-colors duration-200"
-                                    >
-                                      {skill}
-                                    </Badge>
-                                  </motion.div>
-                                ))}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      </motion.div>
-                    ))}
+          {/* Experience Stats */}
+          <motion.div variants={itemVariants}>
+            <Card className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20 backdrop-blur-sm">
+              <CardContent className="p-8">
+                <div className="grid md:grid-cols-4 gap-6 text-center">
+                  <div className="space-y-2">
+                    <div className="text-3xl font-bold text-blue-400">
+                      {experienceStats.totalYears}
+                    </div>
+                    <div className="text-white/80 text-sm">
+                      Years Experience
+                    </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
+                  <div className="space-y-2">
+                    <div className="text-3xl font-bold text-purple-400">
+                      {experienceStats.totalPositions}
+                    </div>
+                    <div className="text-white/80 text-sm">
+                      Positions Held
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-3xl font-bold text-green-400">
+                      {experienceStats.uniqueSkills}
+                    </div>
+                    <div className="text-white/80 text-sm">
+                      Skills Applied
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-3xl font-bold text-yellow-400">
+                      {experienceStats.companies}
+                    </div>
+                    <div className="text-white/80 text-sm">
+                      Organizations
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Experience Timeline */}
+          <div className="space-y-16">
+            {experiences.map((experience, index) => (
+              <CompanySection
+                key={experience.company}
+                experience={experience}
+                index={index}
+              />
+            ))}
           </div>
         </motion.div>
       </div>
     </section>
   );
 }
+
+export default memo(ExperienceSection);

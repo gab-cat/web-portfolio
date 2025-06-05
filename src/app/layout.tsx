@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from 'react-hot-toast';
 import { Poppins, Orbitron } from 'next/font/google';
 import type { Metadata } from 'next';
+// import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider';
 import './globals.css';
 
 const poppins = Poppins({ 
@@ -45,7 +46,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${orbitron.variable} ${poppins.className}`} style={{ backgroundColor: '#0a0a0a', color: '#ffffff' }}>
+        {/* <SmoothScrollProvider> */}
         {children}
+        {/* </SmoothScrollProvider> */}
         <Toaster position="bottom-right" />
         <Analytics />
       </body>
